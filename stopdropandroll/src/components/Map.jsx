@@ -11,6 +11,10 @@ const MapComponent = () => {
     zoom: 8,
   });
 
+  const getLocation = () => {
+    return [viewState.latitude, viewState.longitude];
+  }
+
   if (!process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN) {
     return <div>Error: Mapbox access token not found</div>;
   }
@@ -58,6 +62,7 @@ const MapComponent = () => {
           <NavigationControl />
         </Map>
       </div>
+      <button onClick={getLocation}>Get Location</button>
     </div>
   );
 };
