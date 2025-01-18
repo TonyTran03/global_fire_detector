@@ -17,7 +17,7 @@ const MapComponent = () => {
   }
 
   return (
-    <div style={{ width: "100vw", height: "100vh" }}>
+    <div style={{ width: "80vw", height: "80vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
       <Map
         {...viewState}
         style={{ width: "100%", height: "100%" }}
