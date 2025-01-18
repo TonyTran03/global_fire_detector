@@ -49,38 +49,35 @@ def fire_color(cell):
 def update(frameNum, img, grid, N):
     windDirection = 1  # Random wind direction, 0-7
     newGrid = grid.copy()
-
     for i in range(N):
         for j in range(N):
-            total_fire_neighbors = sum(grid[(i + di) % N, (j + dj) % N]["value"] == FIRE
-                                       for di in range(-1, 2) for dj in range(-1, 2) if (di, dj) != (0, 0))
+            total_fire_neighbors = np.sum(grid[(i + di) % N][(j + dj) % N]["value"] == FIRE
+                            for di in range(-1, 2) for dj in range(-1, 2) if (di, dj) != (0, 0))
 
-            if newGrid[i, j]["value"] == FIRE:
-                # Fire burns out depending on environmental factors
-                flammability_factor = newGrid[i, j]["terrainFlamability"] * (1 - newGrid[i, j]["humidity"] / 100)
-                wind_factor = (1 + newGrid[i, j]["windSpeed"] / 10) * (1 if windDirection in [(i+1)%8, (i-1)%8] else 0.5)
-                temperature_factor = 1 + (newGrid[i, j]["temperature"] - 30) / 100
-                rain_factor = 1 - newGrid[i, j]["rain"] / 100
-                slope_factor = 1 + newGrid[i, j]["terrainSlope"] / 10
-                extinguish_probability = 0.01 * (1 - flammability_factor * wind_factor * temperature_factor * rain_factor * slope_factor)
-                
-                if grid[i, j]["ticksLit"] > 1000000000 or np.random.rand() < extinguish_probability:
-                    newGrid[i, j]["value"] = NO_FIRE
-                    newGrid[i, j]["burned"] = True
+            if newGrid[i][j]["value"] == FIRE:
+                flammability_factor = newGrid[i][j]["terrainFlamability"] * (1 - newGrid[i][j]["humidity"] / 100)
+                wind_factor = (1 + newGrid[i][j]["windSpeed"] / 10) * (3 if windDirection in [(i+1)%8, (i-1)%8] else 0.5)
+                temperature_factor = 1 + (newGrid[i][j]["temperature"] - 30) / 100
+                rain_factor = 1 - newGrid[i][j]["rain"] / 100
+                slope_factor = 1 + newGrid[i][j]["terrainSlope"] / 10
+                extinguish_probability = 0.1 * (1 - flammability_factor * wind_factor * temperature_factor * rain_factor * slope_factor)
+
+                if grid[i][j]["ticksLit"] > 1000000000 or np.random.rand() < extinguish_probability:
+                    newGrid[i][j]["value"] = NO_FIRE
+                    newGrid[i][j]["burned"] = True
                 else:
-                    newGrid[i, j]["ticksLit"] += 1
+                    newGrid[i][j]["ticksLit"] += 1
             else:
-                # Fire spreads to nearby cells depending on environmental factors
-                if total_fire_neighbors > 5 or newGrid[i, j]["closestFire"] < 2 and not newGrid[i, j]["burned"]:
-                    flammability_factor = newGrid[i, j]["terrainFlamability"] * (1 - newGrid[i, j]["humidity"] / 100)
-                    wind_factor = (1 + newGrid[i, j]["windSpeed"] / 10) * (1 if windDirection in [(i+1)%8, (i-1)%8] else 0.5)
-                    temperature_factor = 1 + (newGrid[i, j]["temperature"] - 30) / 100
-                    rain_factor = 1 - newGrid[i, j]["rain"] / 100
-                    slope_factor = 1 + newGrid[i, j]["terrainSlope"] / 10
-                    ignition_probability = 0.01 * flammability_factor * wind_factor * temperature_factor * rain_factor * slope_factor
+                if total_fire_neighbors > 5 or newGrid[i][j]["closestFire"] < 2 and not newGrid[i][j]["burned"]:
+                    flammability_factor = newGrid[i][j]["terrainFlamability"] * (1 - newGrid[i][j]["humidity"] / 100)
+                    wind_factor = (1 + newGrid[i][j]["windSpeed"] / 10) * (3 if windDirection in [(i+1)%8, (i-1)%8] else 0.5)
+                    temperature_factor = 1 + (newGrid[i][j]["temperature"] - 30) / 100
+                    rain_factor = 1 - newGrid[i][j]["rain"] / 100
+                    slope_factor = 1 + newGrid[i][j]["terrainSlope"] / 10
+                    ignition_probability = 0.1 * flammability_factor * wind_factor * temperature_factor * rain_factor * slope_factor
                     if np.random.rand() < ignition_probability:
-                        newGrid[i, j]["value"] = FIRE
-                        newGrid[i, j]["ticksLit"] = 0
+                        newGrid[i][j]["value"] = FIRE
+                        newGrid[i][j]["ticksLit"] = 0
 
     closest_fire(newGrid, N)
 
@@ -88,6 +85,7 @@ def update(frameNum, img, grid, N):
     color_grid = np.array([[fire_color(cell) for cell in row] for row in newGrid])
     img.set_data(color_grid)
     grid[:] = newGrid[:]
+
     return img,
 
 def main():
