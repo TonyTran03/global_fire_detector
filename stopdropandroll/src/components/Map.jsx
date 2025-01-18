@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Map, { NavigationControl } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { BorderBeam } from "@/components/ui/border-beam.jsx";
+
 
 const MapComponent = () => {
   const [viewState, setViewState] = useState({
