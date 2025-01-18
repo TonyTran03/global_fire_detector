@@ -1,11 +1,15 @@
-'use client';
+"use client";
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-
-        {children}
-     
+      <head>
+        <link
+          href="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css"
+          rel="stylesheet"
+        />
+      </head>
+      <body>{children}</body>
     </html>
   );
 }
