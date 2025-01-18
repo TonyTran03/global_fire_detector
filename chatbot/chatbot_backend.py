@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify, render_template
 import requests
+from ml_model import predict_fire_risk
+from weather_data import get_weather_data_from_file
 
 app = Flask(__name__)
 
-OPENAI_API_KEY = 'your-openai-api-key'
+_OPENAI_API_KEY = # api key
 
 @app.route('/')
 def index():
@@ -14,16 +16,27 @@ def chat():
     user_message = request.json.get('message', '')
 
     try:
+        weather_info = get_weather_data_from_file() # weather data so we can feed it into chat prompt
+
+        fire_risk = predict_fire_risk(weather_info) # based on ml model. fxn 
+
+        system_prompt = (
+            """You are a chatbot that provides information about forest fire risks and predictions based on user 
+            queries. You must help users determine how to best evacuate if they are at a high risk of being impacted 
+            by the fires. """
+            f"Current fire risk: {fire_risk}. Weather conditions: {weather_info}."
+        )
+
         response = requests.post(
             'https://api.openai.com/v1/chat/completions',
             headers={
-                'Authorization': f'Bearer {OPENAI_API_KEY}',
+                'Authorization': f'Bearer {_OPENAI_API_KEY}',
                 'Content-Type': 'application/json'
             },
             json={
-                'model': 'gpt-4',  # replace with model version if we wanna change it
+                'model': 'gpt-4',
                 'messages': [
-                    {"role": "system", "content": "You are a chatbot that provides information about forest fire risks and predictions based on user queries."},
+                    {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_message}
                 ]
             }
