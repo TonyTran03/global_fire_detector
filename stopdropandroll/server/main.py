@@ -2,12 +2,14 @@ from flask import Flask, request, jsonify
 import tensorflow as tf
 import numpy as np
 import pandas as pd
-
+from flask_cors import CORS
+# Enable CORS
 # Load the trained model
 model = tf.keras.models.load_model('PrimeFirePredictor.keras')
 
 # Initialize the Flask application
 app = Flask(__name__)
+CORS(app)
 
 FIRE = 255
 NO_FIRE = 0
@@ -53,6 +55,55 @@ def initial_grid(N, on_positions):
     return grid
 
 
+# @app.route("/api/next-fire", methods=["POST"])
+# def next_fire():
+
+#     data = request.get_json()
+#     grid = data["grid"]
+#     N = len(grid)
+#     num_ticks = data["num_ticks"]
+#     windDirection = 1
+
+#     newGrid = grid.copy()
+#     grids = []
+#     for _ in range(num_ticks):
+#         newGrid = newGrid.copy()
+#         for i in range(N):
+#             for j in range(N):
+#                 print(newGrid[i][j])
+#                 total_fire_neighbors = np.sum(grid[(i + di) % N][(j + dj) % N][value] == FIRE
+#                                 for di in range(-1, 2) for dj in range(-1, 2) if (di, dj) != (0, 0))
+
+#                 if newGrid[i][j][value] == FIRE:
+#                   flammability_factor = newGrid[i][j][terrainFlamability] * (1 - newGrid[i][j][humidity] / 100)
+#                   wind_factor = (1 + newGrid[i][j][windSpeed] / 10) * (1 if windDirection in [(i+1)%8, (i-1)%8] else 0.5)
+#                   temperature_factor = 1 + (newGrid[i][j][temperature] - 30) / 100
+#                   rain_factor = 1 - newGrid[i][j][rain] / 100
+#                   slope_factor = 1 + newGrid[i][j][terrainSlope] / 10
+#                   extinguish_probability = 0.1 * (1 - flammability_factor * wind_factor * temperature_factor * rain_factor * slope_factor)
+
+#                   if grid[i][j][ticksLit] > 1000000000 or np.random.rand() < extinguish_probability:
+#                     newGrid[i][j][value] = NO_FIRE
+#                     newGrid[i][j][burned] = True
+#                   else:
+#                     newGrid[i][j][ticksLit] += 1
+#                 else:
+#                   if total_fire_neighbors > 5 or newGrid[i][j][closestFire] < 2 and not newGrid[i][j][burned]:
+#                     flammability_factor = newGrid[i][j][terrainFlamability] * (1 - newGrid[i][j][humidity] / 100)
+#                     wind_factor = (1 + newGrid[i][j][windSpeed] / 10) * (1 if windDirection in [(i+1)%8, (i-1)%8] else 0.5)
+#                     temperature_factor = 1 + (newGrid[i][j][temperature] - 30) / 100
+#                     rain_factor = 1 - newGrid[i][j][rain] / 100
+#                     slope_factor = 1 + newGrid[i][j][terrainSlope] / 10
+#                     ignition_probability = 0.1 * flammability_factor * wind_factor * temperature_factor * rain_factor * slope_factor
+#                     if np.random.rand() < ignition_probability:
+#                       newGrid[i][j][value] = FIRE
+#                       newGrid[i][j][ticksLit] = 0
+
+#                 closest_fire(newGrid, N)
+#                 grids.append(newGrid.copy())
+#                 grid = newGrid.copy()
+#     return jsonify({"grids": [g for g in grids]})
+
 @app.route("/api/next-fire", methods=["POST"])
 def next_fire():
 
@@ -68,45 +119,36 @@ def next_fire():
         newGrid = newGrid.copy()
         for i in range(N):
             for j in range(N):
-                print(newGrid[i][j])
                 total_fire_neighbors = np.sum(grid[(i + di) % N][(j + dj) % N][value] == FIRE
                                 for di in range(-1, 2) for dj in range(-1, 2) if (di, dj) != (0, 0))
 
                 if newGrid[i][j][value] == FIRE:
-                  flammability_factor = newGrid[i][j][terrainFlamability] * (1 - newGrid[i][j][humidity] / 100)
-                  wind_factor = (1 + newGrid[i][j][windSpeed] / 10) * (1 if windDirection in [(i+1)%8, (i-1)%8] else 0.5)
-                  temperature_factor = 1 + (newGrid[i][j][temperature] - 30) / 100
-                  rain_factor = 1 - newGrid[i][j][rain] / 100
-                  slope_factor = 1 + newGrid[i][j][terrainSlope] / 10
-                  extinguish_probability = 0.01 * (1 - flammability_factor * wind_factor * temperature_factor * rain_factor * slope_factor)
-
-                  if grid[i][j][ticksLit] > 1000000000 or np.random.rand() < extinguish_probability:
+                  if grid[i][j][ticksLit] > 1000000000 or np.random.rand() < 0.1:
                     newGrid[i][j][value] = NO_FIRE
                     newGrid[i][j][burned] = True
                   else:
                     newGrid[i][j][ticksLit] += 1
                 else:
                   if total_fire_neighbors > 5 or newGrid[i][j][closestFire] < 2 and not newGrid[i][j][burned]:
-                    flammability_factor = newGrid[i][j][terrainFlamability] * (1 - newGrid[i][j][humidity] / 100)
-                    wind_factor = (1 + newGrid[i][j][windSpeed] / 10) * (1 if windDirection in [(i+1)%8, (i-1)%8] else 0.5)
-                    temperature_factor = 1 + (newGrid[i][j][temperature] - 30) / 100
-                    rain_factor = 1 - newGrid[i][j][rain] / 100
-                    slope_factor = 1 + newGrid[i][j][terrainSlope] / 10
-                    ignition_probability = 0.01 * flammability_factor * wind_factor * temperature_factor * rain_factor * slope_factor
+                    ignition_probability = 0.1
                     if np.random.rand() < ignition_probability:
                       newGrid[i][j][value] = FIRE
                       newGrid[i][j][ticksLit] = 0
 
-                closest_fire(newGrid, N)
                 grids.append(newGrid.copy())
                 grid = newGrid.copy()
     return jsonify({"grids": [g for g in grids]})
+
+
 
 @app.route("/api/get-grid", methods=["POST"])
 def get_grid():
     data = request.get_json()
     N = data["N"]
     on_positions = data["on_positions"]
+
+    on_positions = [tuple(pos) for pos in on_positions]
+    
     grid = initial_grid(N, on_positions)
     return jsonify({"grid": grid.tolist()})
 
