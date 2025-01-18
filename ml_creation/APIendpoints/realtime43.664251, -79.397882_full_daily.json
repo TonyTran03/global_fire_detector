@@ -1,0 +1,33 @@
+{
+    "data": {
+        "time": "2025-01-18T15:09:00Z",
+        "values": {
+            "cloudBase": 0.06,
+            "cloudCeiling": 0.06,
+            "cloudCover": 100,
+            "dewPoint": 2.13,
+            "freezingRainIntensity": 0,
+            "hailProbability": 4.9,
+            "hailSize": 7.11,
+            "humidity": 96,
+            "precipitationProbability": 5,
+            "pressureSurfaceLevel": 990.22,
+            "rainIntensity": 0.16,
+            "sleetIntensity": 0,
+            "snowIntensity": 0,
+            "temperature": 2.69,
+            "temperatureApparent": -1.48,
+            "uvHealthConcern": 0,
+            "uvIndex": 0,
+            "visibility": 10.59,
+            "weatherCode": 1001,
+            "windDirection": 229.81,
+            "windGust": 12.38,
+            "windSpeed": 4.81
+        }
+    },
+    "location": {
+        "lat": 43.664251,
+        "lon": -79.397882
+    }
+}
