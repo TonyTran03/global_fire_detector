@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@next/env": "^15.1.5",
+    "dotenv": "^16.4.7",
+    "mapbox-gl": "^3.9.3",
+    "react-map-gl": "^7.1.8"
+  }
+}
