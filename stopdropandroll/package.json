@@ -15,11 +15,13 @@
     "@react-three/drei": "^9.7.5",
     "@react-three/fiber": "^8.17.12",
     "@react-three/postprocessing": "^2.16.7",
+    "clsx": "^2.1.1",
     "mapbox-gl": "^3.9.3",
     "next": "^13.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-map-gl": "^7.1.8",
+    "tailwind-merge": "^2.6.0",
     "three": "^0.159.0",
     "three-mesh-bvh": "^0.8.0"
   },
