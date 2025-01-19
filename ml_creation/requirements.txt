@@ -1,9 +1,9 @@
-openmeteo_requests
-requests_cache
-pandas
-retry-requests
-Flask
-Flask-Cors
-tensorflow
-numpy
-requests
+tensorflow==2.17.1         # TensorFlow for ML tasks
+numpy==1.24.4             # Numerical computations
+pandas==1.5.3             # Data manipulation
+Flask                     # Web framework
+Flask-Cors                # Enable CORS for Flask
+requests                  # HTTP requests
+retry-requests            # Retry logic for requests
+requests-cache            # Cache requests
+openmeteo-requests        # API library for Open-Meteo (if required)
