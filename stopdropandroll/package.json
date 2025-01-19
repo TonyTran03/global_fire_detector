@@ -16,6 +16,7 @@
     "@react-three/fiber": "^8.17.12",
     "@react-three/postprocessing": "^2.16.7",
     "clsx": "^2.1.1",
+    "fs": "^0.0.1-security",
     "mapbox-gl": "^3.9.3",
     "next": "^13.4.0",
     "react": "^18.2.0",

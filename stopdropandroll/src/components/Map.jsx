@@ -11,7 +11,15 @@ const MapComponent = () => {
     zoom: 8,
   });
 
-  const { handleGetWeather, prediction, weatherData } = useGetConditions();
+  const [geoJsonData, setGeoJsonData] = useState(null);
+
+  const {
+    handleGetWeather,
+    prediction,
+    weatherData,
+    handleGetHeatmapData,
+    heatMapData,
+  } = useGetConditions();
 
   useEffect(() => {
     if ("geolocation" in navigator) {
@@ -38,7 +46,7 @@ const MapComponent = () => {
 
     map.addSource("trees", {
       type: "geojson",
-      data: "/data/trees.geojson",
+      data: geoJsonData,
     });
 
     map.addLayer(
@@ -107,6 +115,72 @@ const MapComponent = () => {
     return [viewState.latitude, viewState.longitude];
   };
 
+  const getHeatmapData = async () => {
+    handleGetHeatmapData(viewState.latitude, viewState.longitude);
+  };
+
+  useEffect(() => {
+    console.log("geojsonData");
+    console.log(heatMapData);
+    if (!heatMapData) return;
+    const geoAverageJson = {
+      type: "FeatureCollection",
+      features: [],
+    };
+
+    // Step 1: Find the maximum temperature in the data
+    const maxTemperature = Math.max(
+      ...Object.values(heatMapData).map((data) => data.temperature)
+    );
+
+    Object.entries(heatMapData).forEach(([coordinates, data]) => {
+      const [latitude, longitude] = coordinates
+        .replace(/[()]/g, "")
+        .split(",")
+        .map(parseFloat);
+
+      const normalizedTemperature =
+        (data.temperature / maxTemperature) * 100 * Math.random();
+
+      geoAverageJson.features.push({
+        type: "Feature",
+        properties: {
+          dbh: normalizedTemperature,
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [latitude, longitude],
+        },
+      });
+
+      // Generate random blobs
+      const numBlobs = Math.floor(Math.random() * 5) + 1; // Random number between 1 and 5
+      const blobRadius = 0.01; // Adjust the radius of the blobs as needed
+
+      for (let i = 0; i < numBlobs; i++) {
+        const randomLatitude = latitude + (Math.random() - 0.5) * blobRadius;
+        const randomLongitude = longitude + (Math.random() - 0.5) * blobRadius;
+
+        const randomNormalizedTemperature =
+          (data.temperature / maxTemperature) * 100 * Math.random();
+
+        geoAverageJson.features.push({
+          type: "Feature",
+          properties: {
+            dbh: randomNormalizedTemperature,
+          },
+          geometry: {
+            type: "Point",
+            coordinates: [randomLatitude, randomLongitude],
+          },
+        });
+      }
+    });
+
+    console.log(JSON.stringify(geoAverageJson));
+    setGeoJsonData(geoAverageJson);
+  }, [heatMapData]);
+
   if (!process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN) {
     return <div>Error: Mapbox access token not found</div>;
   }
@@ -134,19 +208,22 @@ const MapComponent = () => {
           position: "relative",
         }}
       >
-        <Map
-          {...viewState}
-          style={{ width: "100%", height: "100%" }}
-          mapStyle="mapbox://styles/mapbox/streets-v12"
-          mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
-          onMove={(evt) => {
-            setViewState(evt.viewState);
-          }}
-          onLoad={createHeatMap}
-        >
-          <NavigationControl />
-        </Map>
+        {geoJsonData && (
+          <Map
+            {...viewState}
+            style={{ width: "100%", height: "100%" }}
+            mapStyle="mapbox://styles/mapbox/streets-v12"
+            mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
+            onMove={(evt) => {
+              setViewState(evt.viewState);
+            }}
+            onLoad={createHeatMap}
+          >
+            <NavigationControl />
+          </Map>
+        )}
       </div>
+      <button onClick={() => getHeatmapData()}>Get Heatmap Data</button>
       <button onClick={getLocation}>Get Location</button>
       {prediction && (
         <>

@@ -189,7 +189,7 @@ import json
 @app.route('/api/get-weather-from-location', methods=['POST'])
 def get_weather_from_location():
     d = request.get_json()
-
+ 
     _url1 = "https://api.tomorrow.io/v4/weather/realtime?location="
     # _location = "43.664251, -79.397882" # this should be dynamic
     _location = d["location"]
@@ -209,6 +209,184 @@ def get_weather_from_location():
     print(filtered_data)
     return jsonify(filtered_data)
 
+import openmeteo_requests
+
+import requests_cache
+import pandas as pd
+from retry_requests import retry
+import math
+
+cache_session = requests_cache.CachedSession('.cache', expire_after = 3600)
+retry_session = retry(cache_session, retries = 5, backoff_factor = 0.2)
+openmeteo = openmeteo_requests.Client(session = retry_session)
+
+
+@app.route('/api/get-heatmap-data', methods=['POST'])
+def get_heatmap_data():
+    data = request.get_json()
+    latitude = data["latitude"]
+    longitude = data["longitude"]
+    radius = 0.01  # radius of the circle in degrees
+
+    num_points = 20  # number of points to generate
+
+    # Create a list to store the coordinates
+    coordinates = []
+
+    # Generate the coordinates
+    while radius > 0:
+        # Calculate the angular distance between each point
+        angular_distance = 360.0 / num_points
+
+        # Generate the coordinates
+        for i in range(num_points):
+            angle = math.radians(i * angular_distance)
+            dx = radius * math.cos(angle)
+            dy = radius * math.sin(angle)
+            longitude = longitude + dx
+            latitude = latitude + dy
+            coordinates.append((longitude, latitude))
+
+        # Decrease the radius
+        radius -= 0.002
+
+    # Make sure all required weather variables are listed here
+    # The order of variables in hourly or daily is important to assign them correctly below
+    url = "https://api.open-meteo.com/v1/forecast"
+    params = {
+	    "current": ["temperature_2m", "relative_humidity_2m", "rain", "wind_speed_10m", "wind_direction_10m"],
+	    "forecast_days": 1
+    }
+    conditions = {}
+
+    for coordinate in coordinates:
+        print(coordinate)
+        latitude, longitude = coordinate
+        params["latitude"] = latitude
+        params["longitude"] = longitude
+
+        responses = openmeteo.weather_api(url, params=params)
+        response = responses[0]
+        current = response.Current()
+
+        current_temperature_2m = current.Variables(0).Value()
+
+        current_relative_humidity_2m = current.Variables(1).Value()
+
+        current_rain = current.Variables(2).Value()
+
+        current_wind_speed_10m = current.Variables(3).Value()
+
+        current_wind_direction_10m = current.Variables(4).Value()
+
+        conditions[str((latitude, longitude))] = {
+            "temperature": current_temperature_2m,
+            "humidity": current_relative_humidity_2m,
+            "rain": current_rain,
+            "wind_speed": current_wind_speed_10m,
+            "wind_direction": current_wind_direction_10m
+        }
+
+    return jsonify(conditions)
+
+@app.route('/api/get-riskmap-data', methods=['POST'])
+def get_riskmap_data():
+    print("Getting riskmap data")
+    data = request.get_json()
+    latitude = data["latitude"]
+    longitude = data["longitude"]
+    month = data["month"]
+    radius = 0.01  # radius of the circle in degrees
+
+    num_points = 20  # number of points to generate
+
+    # Create a list to store the coordinates
+    coordinates = []
+
+    # Generate the coordinates
+    while radius > 0:
+        # Calculate the angular distance between each point
+        angular_distance = 360.0 / num_points
+        # Generate the coordinates
+        for i in range(num_points):
+            angle = math.radians(i * angular_distance)
+            dx = radius * math.cos(angle)
+            dy = radius * math.sin(angle)
+            longitude = longitude + dx
+            latitude = latitude + dy
+            coordinates.append((longitude, latitude))
+
+        # Decrease the radius
+        radius -= 0.002
+        # Generate the coordinates
+        for i in range(num_points):
+            angle = math.radians(i * angular_distance)
+            dx = radius * math.cos(angle)
+            dy = radius * math.sin(angle)
+            longitude = longitude + dx
+            latitude = latitude + dy
+            coordinates.append((longitude, latitude))
+
+        # Decrease the radius
+        radius -= 0.002
+
+    # Make sure all required weather variables are listed here
+    # The order of variables in hourly or daily is important to assign them correctly below
+    url = "https://api.open-meteo.com/v1/forecast"
+    params = {
+	    "current": ["temperature_2m", "relative_humidity_2m", "rain", "wind_speed_10m", "wind_direction_10m"],
+	    "forecast_days": 1
+    }
+    conditions = {}
+
+    for coordinate in coordinates:
+        print(coordinate)
+        latitude, longitude = coordinate
+        params["latitude"] = longitude # swap since it's true
+        params["longitude"] = latitude
+
+        responses = openmeteo.weather_api(url, params=params)
+        response = responses[0]
+        current = response.Current()
+
+        current_temperature_2m = current.Variables(0).Value()
+
+        current_relative_humidity_2m = current.Variables(1).Value()
+
+        current_rain = current.Variables(2).Value()
+
+        current_wind_speed_10m = current.Variables(3).Value()
+        
+        # Use the model to make a prediction
+        d = {
+            "month": month,
+            "temp": current_temperature_2m,
+            "RH": current_relative_humidity_2m,
+            "wind": current_wind_speed_10m,
+            "rain": current_rain,
+        }
+
+        # Wrap `d` inside a list to indicate it as a single row of data
+        df = pd.DataFrame([d])
+
+        prediction = model.predict(df)
+
+        print(prediction)
+
+        # Check if the prediction is below 20%
+        if prediction[0][1] < 0.2 or prediction[0][1] > 0.85:
+            # Leave the prediction as it is
+            prediction[0][1] = prediction[0][1]
+        else:
+            # Curve the prediction above 20% and move it down to skew it downward
+            prediction[0][1] = (prediction[0][1] - 0.1) * 0.9
+
+        # Convert the prediction to a list and return it as JSON
+        prediction = prediction.tolist()
+
+        conditions[str((latitude, longitude))] = prediction[0][1]
+
+    return jsonify(conditions)
     
 
 
