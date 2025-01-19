@@ -3,11 +3,15 @@ import requests
 from ml_model import predict_fire_risk
 from weather_data import get_weather_data_from_file 
 from flask_cors import CORS 
+from dotenv import load_dotenv
+import os   
+
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 
-_OPENAI_API_KEY = # api key
+_OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
 @app.route('/')
 def index():
