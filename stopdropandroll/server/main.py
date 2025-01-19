@@ -5,7 +5,7 @@ import pandas as pd
 from flask_cors import CORS
 # Enable CORS
 # Load the trained model
-model = tf.keras.models.load_model('PrimeFirePredictor.keras')
+model = tf.keras.models.load_model('ArtificialFirePredictor.keras')
 
 # Initialize the Flask application
 app = Flask(__name__)
@@ -169,8 +169,48 @@ def predict():
     # Use the model to make a prediction
     prediction = model.predict(features_df)
 
-    # Return the prediction result as JSON
-    return jsonify({'prediction': prediction.tolist()})
+    print(prediction)
+
+    # Check if the prediction is below 20%
+    if prediction[0][1] < 0.2 or prediction[0][1] > 0.85:
+        # Leave the prediction as it is
+        prediction[0][1] = prediction[0][1]
+    else:
+        # Curve the prediction above 20% and move it down to skew it downward
+        prediction[0][1] = (prediction[0][1] - 0.1) * 0.9
+
+    # Convert the prediction to a list and return it as JSON
+    prediction = prediction.tolist()
+    return jsonify({'prediction': prediction})
+
+import requests
+import json
+
+@app.route('/api/get-weather-from-location', methods=['POST'])
+def get_weather_from_location():
+    d = request.get_json()
+
+    _url1 = "https://api.tomorrow.io/v4/weather/realtime?location="
+    # _location = "43.664251, -79.397882" # this should be dynamic
+    _location = d["location"]
+    # _url2 = "&apikey=Zqy6hZTbX7mxbLlOkE6avAQK45bPhPUj"
+    _url2 = "&apikey=YdpkyIr52j5IKKVMw1bhQMbT9e2VXQPC"
+
+    _fullURL = _url1 + _location + _url2
+    req = requests.get(_fullURL)
+    data = req.json()
+
+    values = data.get("data", {}).get("values", {})
+
+    desired_keys = ["temperature", "windGust", "windSpeed", "windDirection", "rainIntensity", "humidity"]
+
+    filtered_data = {key: values[key] for key in desired_keys if key in values}
+
+    print(filtered_data)
+    return jsonify(filtered_data)
+
+    
+
 
 # Start the Flask app
 if __name__ == '__main__':
