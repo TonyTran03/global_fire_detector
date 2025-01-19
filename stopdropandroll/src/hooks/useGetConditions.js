@@ -6,7 +6,7 @@ const useGetConditions = () => {
   const [currentFires, setCurrentFires] = useState(null);
 
   const handleGetWeather = (coordinates) => {
-    fetch("http://localhost:5000/api/get-weather-from-location", {
+    fetch("magnificent-rejoicing-production.up.railway.app/api/get-weather-from-location", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -24,7 +24,7 @@ const useGetConditions = () => {
           windSpeed: data.windSpeed,
           windDirection: data.windDirection,
         });
-        fetch("http://localhost:5000/api/predict", {
+        fetch("magnificent-rejoicing-production.up.railway.app/api/predict", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -69,7 +69,7 @@ const useGetConditions = () => {
   const handleGetCurrentFires = (latitude, longitude) => {
     const radius = 1000; // specify the radius in kilometers
 
-    fetch("http://localhost:5000/api/get-fire-data", {
+    fetch("magnificent-rejoicing-production.up.railway.app/api/get-fire-data", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

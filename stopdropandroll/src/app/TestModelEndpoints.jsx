@@ -10,7 +10,7 @@ export default function TestModelEndpoints() {
   };
 
   const handleGetWeather = () => {
-    fetch("http://localhost:5000/api/get-weather-from-location", {
+    fetch("magnificent-rejoicing-production.up.railway.app:5000/api/get-weather-from-location", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -28,7 +28,7 @@ export default function TestModelEndpoints() {
           windSpeed: data.windSpeed,
           windDirection: data.windDirection,
         });
-        fetch("http://localhost:5000/api/predict", {
+        fetch("magnificent-rejoicing-production.up.railway.app:5000/api/predict", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
