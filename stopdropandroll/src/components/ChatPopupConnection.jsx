@@ -9,37 +9,11 @@ const ChatPopup = ({ isOpen, onClose }) => {
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!inputMessage.trim()) return;
-  
+
+    // Add user message immediately
     const userMessage = { role: 'user', content: inputMessage };
-    setMessages((prev) => [...prev, userMessage]);
+    setMessages(prev => [...prev, userMessage]);
     setInputMessage('');
-  
-    try {
-      const response = await fetch('http://127.0.0.1:5000/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message: inputMessage }),
-      });
-  
-      if (!response.ok) {
-        throw new Error('Failed to get a response from the server.');
-      }
-  
-      const data = await response.json(); 
-  
-      if (data.reply) { 
-        const botMessage = { role: 'assistant', content: data.reply };
-        setMessages((prev) => [...prev, botMessage]);
-      } else {
-        const errorMessage = { role: 'assistant', content: 'Something went wrong. Please try again.' };
-        setMessages((prev) => [...prev, errorMessage]);
-      }
-    } catch (error) {
-      const errorMessage = { role: 'assistant', content: 'Error communicating with the server.' };
-      setMessages((prev) => [...prev, errorMessage]);
-    }
   };
 
   if (!isOpen) return null;
@@ -101,4 +75,4 @@ const ChatPopup = ({ isOpen, onClose }) => {
   );
 };
 
-export default ChatPopup; 
+export default ChatPopup;
