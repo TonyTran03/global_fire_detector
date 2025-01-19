@@ -17,6 +17,7 @@
     "@react-three/postprocessing": "^2.16.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "gsap": "^3.12.7",
     "lucide-react": "^0.473.0",
     "mapbox-gl": "^3.9.3",
     "motion": "^11.18.1",

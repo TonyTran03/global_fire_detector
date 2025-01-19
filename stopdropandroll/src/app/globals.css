@@ -38,11 +38,15 @@ background: linear-gradient(180deg, rgba(255,121,72,1) 1%, rgba(255,151,113,1) 4
 
 @font-face {
   font-family: 'PoppinsL';
-  src: url('/fonts/Poppins-\LightItalic.ttf') format;
+  src: url('/fonts/Poppins-LightItalic.ttf') format;
   font-weight: 700; /* Bold */
   font-style: normal;
 }
-
+@font-face {
+  font-family: 'Hero';
+  src: url('/fonts/Hero-Regular.otf') format;
+  font-style: normal;
+}
 @layer base {
   :root {
    

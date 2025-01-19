@@ -41,20 +41,19 @@ export default function HomePage() {
       <div className="relative z-10 basis-2/3 lg:basis-2/3 grow font-poppinsl text-center lg:text-left text-white font-sans px-8 py-4 flex flex-col justify-center items-center lg:items-start">
         {/* Hero Video Dialog */}
         <div className="w-full max-w-md lg:max-w-lg mb-6">
-          <HeroVideoDialog
-            className="dark:hidden block"
-            animationStyle="top-in-bottom-out"
-            videoSrc="https://www.youtube.com/embed/qh3NGpYRG3I?si=4rb-zSdDkVK9qxxb"
-            thumbnailSrc="https://startup-template-sage.vercel.app/hero-light.png"
-            thumbnailAlt="Hero Video"
-          />
-          <HeroVideoDialog
-            className="hidden dark:block"
-            animationStyle="top-in-bottom-out"
-            videoSrc="https://www.youtube.com/embed/qh3NGpYRG3I?si=4rb-zSdDkVK9qxxb"
-            thumbnailSrc="https://startup-template-sage.vercel.app/hero-dark.png"
-            thumbnailAlt="Hero Video"
-          />
+        <HeroVideoDialog
+  className="dark:hidden block"
+
+  thumbnailSrc="https://startup-template-sage.vercel.app/hero-light.png"
+  thumbnailAlt="Go to Map"
+/>
+<HeroVideoDialog
+  className="hidden dark:block"
+
+  thumbnailSrc="https://startup-template-sage.vercel.app/hero-dark.png"
+  thumbnailAlt="Go to Map"
+/>
+
         </div>
 
         {/* Title and Description */}
@@ -71,7 +70,7 @@ export default function HomePage() {
             Learn More
           </button>
           <button className="px-6 py-3 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 transition">
-            Register Now
+            Try it now!
           </button>
         </div>
       </div>

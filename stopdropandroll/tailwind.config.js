@@ -16,6 +16,10 @@ export default {
   			PoppinsL: [
   				'poppinsl',
   				'sans-serif'
+  			],
+        Hero: [
+  				'hero',
+  				'sans-serif'
   			]
   		},
   		borderRadius: {

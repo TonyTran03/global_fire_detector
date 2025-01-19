@@ -12,7 +12,7 @@ export function TruckModel() {
       groupRef.current.rotation.y = Math.PI * 2; // Full rotation around Y-axis
       groupRef.current.rotation.z = Math.PI * 2; // Full rotation around Z-axis
       groupRef.current.rotation.x = Math.PI * 2; // Full rotation around X-axis
-      groupRef.current.position.y += 1; // Adjust Y position
+      groupRef.current.position.y += 15; // Adjust Y position
       groupRef.current.position.z -= 4; // Adjust Z position
     }
   }, []);
