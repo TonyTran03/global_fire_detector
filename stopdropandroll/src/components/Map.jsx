@@ -2,6 +2,9 @@
 import React, { useState, useEffect } from "react";
 import Map, { NavigationControl } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faComment } from "@fortawesome/free-solid-svg-icons";
+import ChatPopup from './ChatPopup';
 
 
 const MapComponent = () => {
@@ -12,6 +15,7 @@ const MapComponent = () => {
   });
 
   const [searchInput, setSearchInput] = useState("");
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const handleSearch = async () => {
     try {
@@ -162,7 +166,7 @@ const MapComponent = () => {
           <NavigationControl />
         </Map>
       </div>
-      <div className="h-[90%] w-[30%] bg-black text-white p-4">
+      <div className="h-[90%] w-[30%] bg-black text-white p-4 relative">
         <p className="text-lg mb-4 font-medium">Search for a specific location:</p>
         <input 
           type="text"
@@ -182,6 +186,16 @@ const MapComponent = () => {
           Search
         </button>
         <p className="mt-3">Based on this location, your should evacuate to...</p>
+        <button 
+          onClick={() => setIsChatOpen(!isChatOpen)} 
+          className="absolute bottom-4 right-4 w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center shadow-md hover:bg-blue-600 transition-all duration-300"
+        >
+          <FontAwesomeIcon icon={faComment} />
+        </button>
+        <ChatPopup 
+          isOpen={isChatOpen} 
+          onClose={() => setIsChatOpen(false)}
+        />
       </div>
     </div>
   );
