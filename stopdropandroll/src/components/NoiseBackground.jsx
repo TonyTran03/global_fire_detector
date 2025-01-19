@@ -4,8 +4,6 @@ function generateNoise(width, height, scale = 0.1) {
     const noiseArray = new Float32Array(width * height);
     for (let x = 0; x < width; x++) {
         for (let y = 0; y < height; y++) {
-            const nx = x / width - 0.5;
-            const ny = y / height - 0.5;
             noiseArray[x + y * width] = Math.random() * scale; // Replace with real noise logic if desired
         }
     }
@@ -25,20 +23,28 @@ export default function NoiseBackground() {
 
         const imageData = ctx.createImageData(width, height);
         for (let i = 0; i < noise.length; i++) {
-            imageData.data[i * 4] = noise[i] * 115; // R
-            imageData.data[i * 4 + 1] = noise[i] * 10; // G
+            imageData.data[i * 4] = noise[i] * 125; // R
+            imageData.data[i * 4 + 1] = noise[i] * 255; // G
             imageData.data[i * 4 + 2] = noise[i] * 255; // B
-            imageData.data[i * 4 + 3] = 255; // A
+            imageData.data[i * 4 + 3] = 50;
         }
 
         ctx.putImageData(imageData, 0, 0);
     }, []);
 
     return (
-        <canvas
-            ref={canvasRef}
+        <div
             className="absolute top-0 left-0 w-full h-full"
-            style={{ zIndex: -1 }}
-        ></canvas>
+            style={{
+                zIndex: -1,
+                background:
+                    "linear-gradient(180deg, rgba(255,125,78,1) 1%, rgba(255,151,113,1) 55%, rgba(73,73,73,1) 99%)",
+            }}
+        >
+            <canvas
+                ref={canvasRef}
+                className="absolute top-0 left-0 w-full h-full"
+            ></canvas>
+        </div>
     );
 }
