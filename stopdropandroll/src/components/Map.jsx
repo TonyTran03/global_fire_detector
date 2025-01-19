@@ -185,7 +185,6 @@ const MapComponent = () => {
         >
           Search
         </button>
-        <p className="mt-3">Based on this location, your should evacuate to...</p>
         <button 
           onClick={() => setIsChatOpen(!isChatOpen)} 
           className="absolute bottom-4 right-4 w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center shadow-md hover:bg-blue-600 transition-all duration-300"
