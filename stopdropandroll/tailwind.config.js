@@ -7,7 +7,10 @@ export default {
   ],
   theme: {
   	extend: {
-  		
+      fontFamily: {
+        poppins: ['poppins', 'sans-serif'],
+        PoppinsL: ['poppinsl','sans-serif'],  // Add your custom font here
+      },
   	}
   },
   plugins: [require('daisyui')],
