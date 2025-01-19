@@ -85,6 +85,8 @@ const MapCurrentFires = () => {
 
     console.log(geoJsonData);
 
+    alert("Found " + geoJsonData.features.length + " fires");
+
     map.addSource("trees", {
       type: "geojson",
       data: geoJsonData,
