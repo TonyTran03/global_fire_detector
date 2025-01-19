@@ -1,2 +1,2 @@
 [python]
-version = "3.8"  # Example: Ensure compatibility with TensorFlow and your libraries
+version = "3.11"
