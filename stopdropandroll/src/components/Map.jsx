@@ -160,7 +160,7 @@ const MapComponent = () => {
       <div //map boarder
         style={{
           width: "100%",
-          height: "90%",
+          height: "100%",
           overflow: "hidden",
           boxShadow:
             "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
@@ -191,7 +191,8 @@ const MapComponent = () => {
           <pre>{JSON.stringify(weatherData, null, 2)}</pre>
         </>
       )}
-      <div className="h-[90%] w-[30%] bg-black text-white p-4 relative">
+      {/*// The bar at the bottom */}
+      <div className="h-[30%] w-[100%] bg-black text-white absolute bottom-0 z-10 ">
         <p className="text-lg mb-4 font-medium">Search for a specific location:</p>
         <input 
           type="text"
@@ -200,11 +201,11 @@ const MapComponent = () => {
           className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg 
                      focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
                      placeholder-gray-400 text-white transition-all duration-200"
-          placeholder="Enter location..."
+          placeholder="Enter an Address or "
         />
         <button 
           onClick={handleSearch}
-          className="mt-3 w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 
+          className="mt-3 w-full  px-4 py-2 bg-blue-600 hover:bg-blue-700 
                      text-white font-medium rounded-lg transition-colors duration-200
                      focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-black"
         >
