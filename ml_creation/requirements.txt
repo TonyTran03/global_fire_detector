@@ -1,6 +1,6 @@
-tensorflow==2.17.1         # TensorFlow for ML tasks
-numpy==1.24.4             # Numerical computations
-pandas==1.5.3             # Data manipulation
+tensorflow        # TensorFlow for ML tasks
+numpy            # Numerical computations
+pandas      # Data manipulation
 Flask                     # Web framework
 Flask-Cors                # Enable CORS for Flask
 requests                  # HTTP requests
