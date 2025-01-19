@@ -4,6 +4,7 @@ const useGetConditions = () => {
   const [weatherData, setWeatherData] = useState(null);
   const [prediction, setPrediction] = useState(null);
   const [currentFires, setCurrentFires] = useState(null);
+  const [riskMapData, setRiskMapData] = useState(null);
 
   const handleGetWeather = (coordinates) => {
     fetch("http://localhost:5000/api/get-weather-from-location", {
@@ -96,12 +97,33 @@ const useGetConditions = () => {
       });
   };
 
+  const handleGetRiskmapData = (latitude, longitude) => {
+    fetch("http://localhost:5000/api/get-riskmap-data", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        latitude,
+        longitude,
+        month: new Date().getMonth() + 1,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setRiskMapData(data);
+      });
+  };
+
   return {
     weatherData,
     prediction,
     handleGetWeather,
     handleGetCurrentFires,
     currentFires,
+    handleGetRiskmapData,
+    riskMapData,
   };
 };
 
