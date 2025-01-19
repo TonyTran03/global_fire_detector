@@ -114,24 +114,23 @@ const MapComponent = () => {
   {/* Chat Section */}
   <div className="hidden flex-1 md:flex md:w-1/3 h-full flex-col bg-gray-100 shadow-lg relative">
   {/* Truck Model Section */}
-  <div className="relative h-1/2 w-full flex-col justify-center items-center">
-    <Suspense fallback={<div>Loading Truck...</div>}>
-      <Canvas
-        style={{ width: "100%", height: "100%" }}
-        camera={{ position: [0, 2, 5], fov: 75 }}
-      >
-        <ambientLight intensity={1} />
-        <directionalLight position={[2, 5, 3]} intensity={2} />
-        <TruckModel />
-      </Canvas>
-    </Suspense>
+  <div className="relative flex-1 w-full flex flex-col">
+  <Suspense fallback={<div>Loading Truck...</div>}>
+    <Canvas
+      style={{ width: "100%", flex: 1 }}
+      camera={{ position: [0, 2, 5], fov: 75 }}
+    >
+      <ambientLight intensity={1} />
+      <directionalLight position={[2, 5, 3]} intensity={2} />
+      <TruckModel />
+    </Canvas>
+  </Suspense>
+</div>
 
-    
-  {/* Chat Section */}
-  <div className="flex-1 flex h-1/2 w-full border-t border-gray-300 p-2">
-    <ChatPopup />
-  </div>
-  </div>
+<div className="flex-1 w-full border-t border-gray-300 p-2">
+  <ChatPopup />
+</div>
+
 
 </div>
 
