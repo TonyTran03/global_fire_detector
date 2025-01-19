@@ -193,34 +193,44 @@ const MapCurrentFires = () => {
           position: "relative",
         }}
       >
-        {currentFires && !loading && (
-          <Map
-            {...viewState}
-            style={{ width: "100%", height: "100%" }}
-            mapStyle="mapbox://styles/mapbox/streets-v12"
-            mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
-            onMove={(evt) => {
-              setViewState(evt.viewState);
-            }}
-            onLoad={createHeatMap}
-          >
-            <NavigationControl />
-          </Map>
+        {simulationOn ? (
+          <FireSimulation
+            getLocation={getLocation}
+            N={100}
+            fireLongLat={currentFires}
+          />
+        ) : (
+          currentFires &&
+          !loading && (
+            <Map
+              {...viewState}
+              style={{ width: "100%", height: "100%" }}
+              mapStyle="mapbox://styles/mapbox/streets-v12"
+              mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
+              onMove={(evt) => {
+                setViewState(evt.viewState);
+              }}
+              onLoad={createHeatMap}
+            >
+              <NavigationControl />
+            </Map>
+          )
         )}
       </div>
-
-      <button onClick={getLocation}>Get Location</button>
-      <button onClick={() => getFires()}>Get Fires</button>
-      <button onClick={() => setSimulationOn(!simulationOn)}>
-        {simulationOn ? "Stop Simulation" : "Start Simulation"}
-      </button>
-      {simulationOn && (
-        <FireSimulation
-          getLocation={getLocation}
-          N={100}
-          fireLongLat={currentFires}
-        />
-      )}
+      <div className="flex flex-col gap-12 items-center justify-center pb-24">
+        <button
+          onClick={() => getFires()}
+          className="p-3 bg-red-900 m-3 text-white rounded-sm"
+        >
+          Load Nearby Fires
+        </button>
+        <button
+          onClick={() => setSimulationOn(!simulationOn)}
+          className="p-3 bg-red-900 m-3 text-white rounded-sm"
+        >
+          {simulationOn ? "Stop Simulation" : "Start Simulation"}
+        </button>
+      </div>
       {/*// The bar at the bottom */}
       <div className="h-[30%] w-[100%] bg-black text-white absolute bottom-0 z-10 ">
         <p className="text-lg mb-4 font-medium">
