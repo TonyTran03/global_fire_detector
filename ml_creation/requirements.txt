@@ -1,4 +1,9 @@
-tensorflow==2.12.0
-numpy==1.24.4
-pandas==1.5.3
-flask  # or Flask/Django, depending on your framework
+openmeteo_requests
+requests_cache
+pandas
+retry-requests
+Flask
+Flask-Cors
+tensorflow
+numpy
+requests
