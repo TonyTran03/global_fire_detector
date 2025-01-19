@@ -11,7 +11,37 @@ const MapComponent = () => {
     zoom: 8,
   });
 
+
+  
   const { handleGetWeather, prediction, weatherData } = useGetConditions();
+  const [searchInput, setSearchInput] = useState("");
+
+  const handleSearch = async () => {
+    try {
+      const response = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+          searchInput
+        )}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}`
+      );
+      const data = await response.json();
+      
+      if (data.features && data.features.length > 0) {
+        const [longitude, latitude] = data.features[0].center;
+        setViewState(prev => ({
+          ...prev,
+          latitude,
+          longitude,
+          zoom: 10
+        }));
+
+        setSearchInput("");
+      }
+
+    } catch (error) {
+      console.error("Error searching location:", error);
+    }
+  };
+
 
   useEffect(() => {
     if ("geolocation" in navigator) {
@@ -114,10 +144,10 @@ const MapComponent = () => {
   return (
     <div //map
       style={{
-        width: "70vw",
+        width: "100vw",
         height: "100vh",
         display: "flex",
-        flexDirection: "column",
+        flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
         overflow: "hidden",
@@ -127,7 +157,6 @@ const MapComponent = () => {
         style={{
           width: "100%",
           height: "90%",
-          borderRadius: "12px",
           overflow: "hidden",
           boxShadow:
             "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
@@ -147,7 +176,8 @@ const MapComponent = () => {
           <NavigationControl />
         </Map>
       </div>
-      <button onClick={getLocation}>Get Location</button>
+
+        <button onClick={getLocation}>Get Location</button>
       {prediction && (
         <>
           <h1>Prediction</h1>
@@ -157,6 +187,28 @@ const MapComponent = () => {
           <pre>{JSON.stringify(weatherData, null, 2)}</pre>
         </>
       )}
+      <div className="h-[90%] w-[30%] bg-black text-white p-4">
+        <p className="text-lg mb-4 font-medium">Search for a specific location:</p>
+        <input 
+          type="text"
+          value={searchInput} 
+          onChange={(evt) => setSearchInput(evt.target.value)}
+          className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg 
+                     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                     placeholder-gray-400 text-white transition-all duration-200"
+          placeholder="Enter location..."
+        />
+        <button 
+          onClick={handleSearch}
+          className="mt-3 w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 
+                     text-white font-medium rounded-lg transition-colors duration-200
+                     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-black"
+        >
+          Search
+        </button>
+        <p className="mt-3">Based on this location, your should evacuate to...</p>
+      </div>
+
     </div>
   );
 };
