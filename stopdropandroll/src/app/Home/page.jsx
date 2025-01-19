@@ -1,82 +1,75 @@
 'use client';
-import React, { Suspense, useEffect } from 'react';
+import React, { Suspense, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { useGLTF, useAnimations } from '@react-three/drei';
-
-function FireModel({ progress }) {
-   const { scene, animations } = useGLTF('/models/betterflame7.glb');
-   const { actions } = useAnimations(animations, scene);
-
-   React.useEffect(() => {
-       if (actions) {
-           if (progress >= 1) {
-               Object.values(actions).forEach((action) => action.stop());
-           } else {
-               Object.values(actions).forEach((action) => action.play());
-           }
-       }
-   }, [actions, progress]);
-
-   return <primitive object={scene} scale={0.8} position={[0, -2, -0.2]} />;
-}
-
-import { useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
 import NoiseBackground from '@/components/NoiseBackground';
 import { TruckModel } from '@/components/TruckModel';
 import HeroVideoDialog from '@/components/ui/hero-video-dialog';
+import { WarpBackground } from '@/components/ui/warp-background';
 
-
-
-function WoodModel() {
-   const { scene } = useGLTF('/models/betterwood.glb');
-   return <primitive object={scene} scale={0.75} position={[0, -2, 0]} />;
-}
+import { RainbowButton } from '@/components/ui/rainbow-button';
+import { ShinyButton } from '@/components/ui/shiny-button';
 
 export default function HomePage() {
+  const [perspective, setPerspective] = useState(100); 
+
   return (
-    <div className="relative flex flex-col lg:flex-row justify-center w-screen h-screen">
-      {/* Text Section */}
+    <div className="relative flex flex-col lg:flex-row justify-center w-screen h-screen overflow-visible">
+      {/* Warp Animation Background */}
+      <WarpBackground
+        className="absolute inset-0 z-0"
+        perspective={perspective}
+        beamsPerSide={5}
+        beamSize={5}
+        beamDelayMax={3}
+        beamDelayMin={0.5}
+        beamDuration={2.5}
+        gridColor="hsl(240, 50%, 20%)"
+      />
+
+      {/* Background Noise */}
       <NoiseBackground />
-      <div className="relative z-10 basis-2/3 lg:basis-2/3 grow font-poppinsl text-center lg:text-left text-white font-sans px-8 py-4 flex flex-col justify-center items-center lg:items-start">
-        {/* Hero Video Dialog */}
-        <div className="w-full max-w-md lg:max-w-lg mb-6">
-        <HeroVideoDialog
-  className="dark:hidden block"
 
-  thumbnailSrc="https://startup-template-sage.vercel.app/hero-light.png"
-  thumbnailAlt="Go to Map"
-/>
-<HeroVideoDialog
-  className="hidden dark:block"
+      {/* Text Section */}
+      <div className="relative z-10 lg:basis-2/3 grow font-poppinsl text-center lg:text-left text-white font-sans px-8 py-4 flex flex-col justify-center items-center lg:items-start">
+  {/* Glass Background */}
+  <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/20 backdrop-blur-lg rounded-lg shadow-lg z-[-1]" />
 
-  thumbnailSrc="https://startup-template-sage.vercel.app/hero-dark.png"
-  thumbnailAlt="Go to Map"
-/>
+  {/* Hero Video Dialog */}
+  <div className="w-full max-w-md lg:max-w-lg mb-6">
+    <HeroVideoDialog
+      className="dark:hidden block"
+      thumbnailSrc="https://startup-template-sage.vercel.app/hero-light.png"
+      thumbnailAlt="Go to Map"
+    />
+    <HeroVideoDialog
+      className="hidden dark:block"
+      thumbnailSrc="https://startup-template-sage.vercel.app/hero-dark.png"
+      thumbnailAlt="Go to Map"
+    />
+  </div>
 
-        </div>
+  {/* Title and Description */}
+  <h1 className="text-3xl sm:text-4xl lg:text-6xl font-Hero font-extrabold mb-4 leading-tight">
+    Global Fire Detector
+  </h1>
+  <p className="text-base sm:text-lg font-PoppinsL lg:text-xl leading-relaxed mb-8">
+    Complex Machine Learning Algorithm to Detect Wildfires in Real Time.
+  </p>
 
-        {/* Title and Description */}
-        <h1 className="text-3xl sm:text-4xl lg:text-6xl font-extrabold mb-4 leading-tight">
-          Global Fire Detector
-        </h1>
-        <p className="text-base sm:text-lg lg:text-xl leading-relaxed mb-8">
-          Complex Machine Learning Algorithm to Detect Wildfires in Real Time.
-        </p>
+  {/* Buttons */}
+  <div className="flex gap-4">
 
-        {/* Buttons */}
-        <div className="flex gap-4">
-          <button className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition">
-            Learn More
-          </button>
-          <button className="px-6 py-3 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 transition">
-            Try it now!
-          </button>
-        </div>
-      </div>
+      
+      <ShinyButton  >Learn More</ShinyButton>
+     <  RainbowButton> Try it now!</RainbowButton>
+      
+
+  </div>
+</div>
+
 
       {/* Canvas Section */}
-      <div className="relative z-10 basis-1/3 lg:basis-1/3 flex justify-center items-center h-1/2 lg:h-screen">
+      <div className="relative z-20 flex justify-center items-center h-screen w-full overflow-visible">
         <Suspense fallback={<div>Loading 3D Model...</div>}>
           <Canvas camera={{ position: [0, 2, 5], fov: 75 }}>
             <ambientLight intensity={1.5} />
@@ -88,5 +81,3 @@ export default function HomePage() {
     </div>
   );
 }
-
-

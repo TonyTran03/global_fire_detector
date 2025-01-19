@@ -1,12 +1,14 @@
+"use client";
+
 import React from "react";
 import MapComponent from "@/components/Map";
-import MapRisk from "@/components/MapRisk";
+import MapCurrentFires from "@/components/MapCurrentFires";
+import FireSimulation from "../FireSimulation";
 
 export default function Maps() {
   return (
     <div>
-      {/* <MapComponent /> */}
-      <MapRisk />
+      <MapComponent />
     </div>
   );
 }

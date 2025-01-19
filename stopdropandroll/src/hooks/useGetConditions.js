@@ -5,6 +5,7 @@ const useGetConditions = () => {
   const [prediction, setPrediction] = useState(null);
   const [heatMapData, setHeatMapData] = useState(null);
   const [riskMapData, setRiskMapData] = useState(null);
+  const [currentFires, setCurrentFires] = useState(null);
 
   const handleGetWeather = (coordinates) => {
     fetch("http://localhost:5000/api/get-weather-from-location", {
@@ -67,6 +68,36 @@ const useGetConditions = () => {
       });
   };
 
+  const handleGetCurrentFires = (latitude, longitude) => {
+    const radius = 1000; // specify the radius in kilometers
+
+    fetch("http://localhost:5000/api/get-fire-data", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        date: new Date().toISOString().split("T")[0],
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const csvData = data.split("\n").map((row) => row.split(","));
+        const filteredData = csvData.filter((row) => {
+          const distance = calculateDistance(
+            latitude,
+            longitude,
+            parseFloat(row[0]),
+            parseFloat(row[1])
+          );
+          return distance <= radius;
+        });
+
+        console.log(filteredData);
+        setCurrentFires(filteredData);
+      });
+  };
+
   const handleGetHeatmapData = (latitude, longitude) => {
     fetch("http://localhost:5000/api/get-heatmap-data", {
       method: "POST",
@@ -82,6 +113,19 @@ const useGetConditions = () => {
       .then((data) => {
         console.log(data);
         setHeatMapData(data);
+        const csvData = data.split("\n").map((row) => row.split(","));
+        const filteredData = csvData.filter((row) => {
+          const distance = calculateDistance(
+            latitude,
+            longitude,
+            parseFloat(row[0]),
+            parseFloat(row[1])
+          );
+          return distance <= radius;
+        });
+
+        console.log(filteredData);
+        setCurrentFires(filteredData);
       });
   };
 
@@ -93,6 +137,8 @@ const useGetConditions = () => {
     heatMapData,
     handleGetRiskmapData,
     riskMapData,
+    handleGetCurrentFires,
+    currentFires,
   };
 };
 

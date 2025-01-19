@@ -185,6 +185,8 @@ def predict():
 
 import requests
 import json
+import datetime
+import io
 
 @app.route('/api/get-weather-from-location', methods=['POST'])
 def get_weather_from_location():
@@ -388,7 +390,92 @@ def get_riskmap_data():
 
     return jsonify(conditions)
     
+NASA_API_KEY = "c979e89c482b1c087c270aff0631d1cb"
 
+NASA_URL = "https://firms.modaps.eosdis.nasa.gov/api/area/csv/c979e89c482b1c087c270aff0631d1cb/VIIRS_SNPP_NRT/world/1/2025-01-19"
+
+@app.route('/api/get-fire-data', methods=['POST'])
+def get_fire_data():
+    d = request.get_json()
+    _date = d["date"]
+
+    _url = "https://firms.modaps.eosdis.nasa.gov/api/area/csv/" + NASA_API_KEY + "/VIIRS_SNPP_NRT/world/1/" + _date
+    req = requests.get(_url)
+    data = req.content.decode('utf-8')
+    df = pd.read_csv(io.StringIO(data))
+
+    print(df)
+    return jsonify(data)
+
+import openmeteo_requests
+
+import requests_cache
+import pandas as pd
+from retry_requests import retry
+
+# Setup the Open-Meteo API client with cache and retry on error
+cache_session = requests_cache.CachedSession('.cache', expire_after = 3600)
+retry_session = retry(cache_session, retries = 5, backoff_factor = 0.2)
+openmeteo = openmeteo_requests.Client(session = retry_session)
+
+
+@app.route("/api/get-weather-for-simulation", methods=["POST"])
+def get_weather_for_simulation():
+    d = request.get_json()
+    location = d["location"]
+    lat, lon = map(float, d["location"].split(","))
+
+    square_size = 12
+    points = []
+    for i in range(square_size):
+        for j in range(square_size):
+            point_lat = lat - (square_size / 2) + i
+            point_lon = lon - (square_size / 2) + j
+            points.append((point_lat, point_lon))
+
+    weather_data = []
+
+    url = "https://api.open-meteo.com/v1/forecast"
+    params = {
+        "current": ["temperature_2m", "relative_humidity_2m", "rain", "wind_speed_10m", "wind_direction_10m"],
+        "forecast_days": 1
+    }
+
+
+    for point in points:
+        print(point)
+        lat, lon = point
+        params["latitude"] = lat
+        params["longitude"] = lon
+        responses = openmeteo.weather_api(url, params=params)
+
+        # Process first location. Add a for-loop for multiple locations or weather models
+        response = responses[0]
+
+        # Current values. The order of variables needs to be the same as requested.
+        current = response.Current()
+
+        current_temperature_2m = current.Variables(0).Value()
+
+        current_relative_humidity_2m = current.Variables(1).Value()
+
+        current_rain = current.Variables(2).Value()
+
+        current_wind_speed_10m = current.Variables(3).Value()
+
+        current_wind_direction_10m = current.Variables(4).Value()
+
+        weather_data.append({
+            "lat": int(lat),
+            "lon": int(lon),
+            "temperature": current_temperature_2m,
+            "humidity": current_relative_humidity_2m,
+            "rain": current_rain,
+            "windSpeed": current_wind_speed_10m,
+            "windDirection": current_wind_direction_10m
+        })
+
+    return jsonify(weather_data)
 
 # Start the Flask app
 if __name__ == '__main__':
