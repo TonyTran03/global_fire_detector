@@ -1,8 +1,8 @@
-'use client';
+"use client";
 import React, { useState, useEffect } from "react";
 import Map, { NavigationControl } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-
+import useGetConditions from "@/hooks/useGetConditions";
 
 const MapComponent = () => {
   const [viewState, setViewState] = useState({
@@ -11,15 +11,17 @@ const MapComponent = () => {
     zoom: 8,
   });
 
+  const { handleGetWeather, prediction, weatherData } = useGetConditions();
+
   useEffect(() => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setViewState(prev => ({
+          setViewState((prev) => ({
             ...prev,
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
-            zoom: 8 // Zoom in closer when showing user location
+            zoom: 8, // Zoom in closer when showing user location
           }));
         },
         (error) => {
@@ -34,74 +36,82 @@ const MapComponent = () => {
   const createHeatMap = (evt) => {
     const map = evt.target;
 
-    map.addSource('trees', {
-      type: 'geojson',
-      data: '/data/trees.geojson'
+    map.addSource("trees", {
+      type: "geojson",
+      data: "/data/trees.geojson",
     });
 
-    map.addLayer({
-      "id": "trees-heat", /* Reference id. */
-      "type": "heatmap", /* Type of layer being created. */
-      "source": "trees", /* Source of the layer's data, as referred to above in addSource() */
-      "maxzoom": 15, /* Maximum zoom level for this layer. If exceeded, this layer will not be displayed. */
-      "paint": {
-        /* Increase weight as diameter breast height increases. */
+    map.addLayer(
+      {
+        id: "trees-heat" /* Reference id. */,
+        type: "heatmap" /* Type of layer being created. */,
+        source:
+          "trees" /* Source of the layer's data, as referred to above in addSource() */,
+        maxzoom: 15 /* Maximum zoom level for this layer. If exceeded, this layer will not be displayed. */,
+        paint: {
+          /* Increase weight as diameter breast height increases. */
           "heatmap-weight": {
-              "property": "dbh",
-              "type": "exponential",
-              "stops": [
-                  [1, 0],
-                  [62, 1]
-              ]
+            property: "dbh",
+            type: "exponential",
+            stops: [
+              [1, 0],
+              [62, 1],
+            ],
           },
-        /* Increase intensity as zoom level increases. */
+          /* Increase intensity as zoom level increases. */
           "heatmap-intensity": {
-              "stops": [
-                  [11, 1],
-                  [15, 3]
-              ]
+            stops: [
+              [11, 1],
+              [15, 3],
+            ],
           },
-        /* Use sequential color palette to use exponentially as the weight increases. */
+          /* Use sequential color palette to use exponentially as the weight increases. */
           "heatmap-color": [
             "interpolate",
             ["linear"],
             ["heatmap-density"],
-            0, "rgba(255,255,178,0)",  // Light yellow, very low intensity
-            0.2, "rgb(254,204,92)",    // Yellow
-            0.4, "rgb(253,141,60)",    // Orange
-            0.6, "rgb(240,59,32)",     // Red
-            0.8, "rgb(189,0,38)"       // Dark red, very high intensity
+            0,
+            "rgba(255,255,178,0)", // Light yellow, very low intensity
+            0.2,
+            "rgb(254,204,92)", // Yellow
+            0.4,
+            "rgb(253,141,60)", // Orange
+            0.6,
+            "rgb(240,59,32)", // Red
+            0.8,
+            "rgb(189,0,38)", // Dark red, very high intensity
           ],
           /* Increase radius as zoom increases. */
           "heatmap-radius": {
-              "stops": [
-                  [11, 15],
-                  [15, 20]
-              ]
+            stops: [
+              [11, 15],
+              [15, 20],
+            ],
           },
           /* Decrease opacity to transition into the circle layer. */
           "heatmap-opacity": {
-              "default": 1,
-              "stops": [
-                  [14, 1],
-                  [15, 0]
-              ]
+            default: 1,
+            stops: [
+              [14, 1],
+              [15, 0],
+            ],
           },
-      }
-  }, 'waterway-label'); /* The layer just described will go above the waterway-label. */
-  }
+        },
+      },
+      "waterway-label"
+    ); /* The layer just described will go above the waterway-label. */
+  };
 
-  const getLocation = () => {
+  const getLocation = async () => {
+    handleGetWeather(viewState.latitude + ", " + viewState.longitude);
     return [viewState.latitude, viewState.longitude];
-  }
+  };
 
   if (!process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN) {
     return <div>Error: Mapbox access token not found</div>;
   }
 
   return (
-
-    
     <div //map
       style={{
         width: "70vw",
@@ -121,11 +131,9 @@ const MapComponent = () => {
           overflow: "hidden",
           boxShadow:
             "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
-          position: "relative", 
+          position: "relative",
         }}
       >
-       
-        
         <Map
           {...viewState}
           style={{ width: "100%", height: "100%" }}
@@ -140,6 +148,15 @@ const MapComponent = () => {
         </Map>
       </div>
       <button onClick={getLocation}>Get Location</button>
+      {prediction && (
+        <>
+          <h1>Prediction</h1>
+          <pre>There is {prediction[1] * 100}% a fire</pre>
+
+          <h1>Weather Data</h1>
+          <pre>{JSON.stringify(weatherData, null, 2)}</pre>
+        </>
+      )}
     </div>
   );
 };
