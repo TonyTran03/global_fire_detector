@@ -2,10 +2,10 @@
 import React, { useState, useEffect, Suspense } from "react";
 import Map, { NavigationControl } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import useGetConditions from "@/hooks/useGetConditions";
+import useGetConditions from "../hooks/useGetConditions";
 import ChatPopup from "./ChatPopup";
 import { Canvas } from "@react-three/fiber";
-import { TruckModel } from "@/components/TruckModel";
+import { TruckModel } from "./TruckModel";
 
 const MapComponent = () => {
   const [viewState, setViewState] = useState({
