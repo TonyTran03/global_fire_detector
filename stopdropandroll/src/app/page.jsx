@@ -32,7 +32,7 @@ export default function HomePage() {
       {/* Text Section */}
       <div className="relative z-10 lg:basis-2/3 grow font-poppinsl text-center lg:text-left text-white font-sans px-8 py-4 flex flex-col justify-center items-center lg:items-start">
         {/* Glass Background */}
-        <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/20 backdrop-blur-lg rounded-lg shadow-lg z-[-1]" />
+        <div className="relative inset-0 bg-gradient-to-r h-1/2 flex justify-center items-center from-white/10 to-white/20 backdrop-blur-lg rounded-lg shadow-lg z-[-1]" />
 
         {/* Hero Video Dialog */}
         <div className="w-full max-w-md lg:max-w-lg mb-6">
