@@ -6,7 +6,7 @@ const useGetConditions = () => {
   const [heatMapData, setHeatMapData] = useState(null);
   const [riskMapData, setRiskMapData] = useState(null);
   const [currentFires, setCurrentFires] = useState(null);
-  const [riskMapData, setRiskMapData] = useState(null);
+
 
   const handleGetWeather = (coordinates) => {
     fetch("global_fire_detector.railway.internal/api/get-weather-from-location", {
