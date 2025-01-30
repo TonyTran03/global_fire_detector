@@ -1,10 +1,10 @@
-'use client';
-import './globals.css';
-import React, { useEffect } from 'react';
-import { useRouter } from 'next/navigation'; // App Router's useRouter
-import { useLoading, LoadingProvider } from '../components/LoadingContext';
-import Loading from '../components/Loading';
-import Nav from '../components/Nav';
+"use client";
+import "./globals.css";
+import React, { useEffect } from "react";
+import { useRouter } from "next/navigation"; // App Router's useRouter
+import { useLoading, LoadingProvider } from "../components/LoadingContext";
+import Loading from "../components/Loading";
+import Nav from "../components/Nav";
 
 function LayoutContent({ children }) {
   const { isLoading, setIsLoading } = useLoading();

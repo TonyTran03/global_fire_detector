@@ -1,0 +1,9 @@
+tensorflow        # TensorFlow for ML tasks
+numpy            # Numerical computations
+pandas      # Data manipulation
+Flask                     # Web framework
+Flask-Cors                # Enable CORS for Flask
+requests                  # HTTP requests
+retry-requests            # Retry logic for requests
+requests-cache            # Cache requests
+openmeteo-requests        # API library for Open-Meteo (if required)

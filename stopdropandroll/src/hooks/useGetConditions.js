@@ -6,9 +6,10 @@ const useGetConditions = () => {
   const [heatMapData, setHeatMapData] = useState(null);
   const [riskMapData, setRiskMapData] = useState(null);
   const [currentFires, setCurrentFires] = useState(null);
+  const [riskMapData, setRiskMapData] = useState(null);
 
   const handleGetWeather = (coordinates) => {
-    fetch("http://localhost:5000/api/get-weather-from-location", {
+    fetch("global_fire_detector.railway.internal/api/get-weather-from-location", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -26,7 +27,7 @@ const useGetConditions = () => {
           windSpeed: data.windSpeed,
           windDirection: data.windDirection,
         });
-        fetch("http://localhost:5000/api/predict", {
+        fetch("global_fire_detector.railway.internal/api/predict", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -71,7 +72,7 @@ const useGetConditions = () => {
   const handleGetCurrentFires = (latitude, longitude) => {
     const radius = 1000; // specify the radius in kilometers
 
-    fetch("http://localhost:5000/api/get-fire-data", {
+    fetch("global_fire_detector.railway.internal/api/get-fire-data", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -139,6 +140,8 @@ const useGetConditions = () => {
     riskMapData,
     handleGetCurrentFires,
     currentFires,
+    handleGetRiskmapData,
+    riskMapData,
   };
 };
 

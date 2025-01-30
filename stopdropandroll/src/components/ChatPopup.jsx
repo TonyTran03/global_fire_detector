@@ -39,7 +39,6 @@
     return (
   <div className="flex flex-col h-screen max-h-[-90] p-2">
     {/* Chat Messages */}
-    <div className="flex flex-1"></div>
     <div className="flex-1 overflow-y-auto border border-gray-300 p-2 rounded-lg mb-2 max-h-48">
       {messages.length === 0 && (
         <p className="text-sm text-gray-500">Trucky can make mistakes. Check important info.</p>

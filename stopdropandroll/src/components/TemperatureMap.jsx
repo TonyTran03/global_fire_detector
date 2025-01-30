@@ -7,7 +7,7 @@ import ChatPopup from "./ChatPopup";
 import { Canvas } from "@react-three/fiber";
 import { TruckModel } from "./TruckModel";
 
-const MapComponent = () => {
+const TemperatureMap = () => {
   const [viewState, setViewState] = useState({
     latitude: 45.4211,
     longitude: -75.6903,
@@ -345,4 +345,4 @@ const MapComponent = () => {
   );
 };
 
-export default MapComponent;
+export default TemperatureMap;
